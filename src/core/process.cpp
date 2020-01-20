@@ -20,7 +20,6 @@
 BOOL __stdcall Process::GetProcessList(WCHAR *wcpExeFile)
 {
     HANDLE hProcessSnap;
-    DWORD test;
     PROCESSENTRY32W pe32;
     memset(&pe32, 0x00, sizeof(pe32));
     pe32.dwSize = sizeof(pe32);
@@ -82,11 +81,13 @@ BOOL __stdcall Process::GetProcessModules(HANDLE hProcess, char *cpDllPath)
         for (unsigned int v0 = 0; v0 < (dwNeeded / sizeof(HMODULE)); v0++) {
             if (GetModuleFileNameExA(hProcess, hProcessModules[v0], cModuleName, sizeof(cModuleName) / sizeof(TCHAR))
             && CompareStringA(LOCALE_ALL, NORM_IGNORECASE, cModuleName, strlen(cModuleName), cDllPath, strlen(cDllPath)) == CSTR_EQUAL) {
-               std::cout << "0x" << hProcessModules[v0] << " -> " << cModuleName << std::endl;
-               return EXIT_SUCCESS;
+                std::wcout << "0x" << hProcessModules[v0] << " -> " << cModuleName << std::endl;
+                std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;
+                return EXIT_SUCCESS;
             }
             memset(cModuleName, 0x00, sizeof(cModuleName));
         }
+        std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;
         return EXIT_FAILURE;
     }
     std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;

@@ -85,19 +85,16 @@ int main()
     injection.dwPid = dwPid;
     injection.lpcvDllPath = cDllPath;
     if (injection.native() == EXIT_SUCCESS) { 
-        if (process.GetProcessModules(injection.hProcess, cDllPath)) {
+        if (process.GetProcessModules(injection.hProcess, cDllPath) == EXIT_SUCCESS) {
             std::wcout << "[*] DLL injected successfuly!" << std::endl;
-            getchar();
         }
         else {
             std::wcout << "[!] DLL not injected! it's looks like Does not written on memory area" << std::endl;
-            getchar();
         }
     }
     else {
         std::wcout << "[!] DLL not injected!" << std::endl;
-        getchar();
     }
-    getchar();
+    system("pause");
     CloseHandle(injection.hProcess);
 }
