@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\inject.cpp" />
+    <ClCompile Include="src\core\process.cpp" />
     <ClCompile Include="src\core\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +148,7 @@
     <None Include="src\core\main.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\process.h" />
     <ClInclude Include="src\core\include.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

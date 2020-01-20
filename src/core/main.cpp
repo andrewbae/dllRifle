@@ -19,40 +19,70 @@
 
 int main()
 {
-	Injection injection;
-	OPENFILENAMEA ofn;
-	HANDLE Token, hProcess;
-	DWORD dwPid = (DWORD)0;
-	char cDllPath[OFN_FILE_PATH_MAXIMUM];
+    Injection injection;
+    Process process;
+    OPENFILENAMEA ofn;
+    HANDLE Token, hProcess;
+    DWORD dwPid = (DWORD)0;
+    unsigned short uInput;
+    char cDllPath[OFN_FILE_PATH_MAXIMUM];
 
-	std::wcout << "[*] choice the process" << std::endl << std::endl;
-	std::cin >> dwPid;
+    memset(&ofn, 0x00, sizeof(ofn));
+    memset(cDllPath, 0x00, sizeof(cDllPath));
 
-	memset(&ofn, 0x00, sizeof(ofn));
-	memset(cDllPath, 0x00, sizeof(cDllPath));
+    while (dwPid == 0) {
+        std::wcout.clear();
+        std::cin.clear();
 
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = nullptr;
-	ofn.nMaxFile = sizeof(cDllPath);
-	ofn.lpstrFile = cDllPath;
-	ofn.lpstrFilter = "DLL\0*.dll\0";
-	ofn.nFilterIndex = 1;
-	ofn.nMaxFileTitle = 0;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+        std::wcout << "0: Process list" << std::endl \
+            << "1: Search process with name (EX: shit.exe)" << std::endl \
+            << "2: Enter PID" << std::endl, uInput = 0;
 
-	GetOpenFileNameA(&ofn);
-	std::wcout << "[*] chosen DLL: " << cDllPath << std::endl << std::endl;
+        std::wcout << "> ", std::cin >> uInput;
 
-	// preparing done
+        switch (uInput) {
+        case PROC_SEARCH: {
+            process.GetProcessList();
+            break;
+        }
+        case PROC_SEARCH_NAME: {
+            std::wcout << "processName> ", std::wcin >> process.wcExeFile;
+            process.GetProcessList();
+            break;
+        }
+        case PROC_ID: {
+            std::wcout << "pid> ", std::cin >> dwPid;
+            break;
+        }
+        default: {
+            std::wcout << "Unknown command" << std::endl;
+            break;
+        }
+        }
+    }
 
-	injection.GetPrivilege();
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = nullptr;
+    ofn.nMaxFile = sizeof(cDllPath);
+    ofn.lpstrFile = cDllPath;
+    ofn.lpstrFilter = "DLL\0*.dll\0";
+    ofn.nFilterIndex = 1;
+    ofn.nMaxFileTitle = 0;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-	injection.dwPid = dwPid;
-	injection.lpcvDllPath = cDllPath;
-	if (injection.native() == EXIT_SUCCESS) {
-		std::cout << "[*] DLL injected successfuly!" << std::endl;
-	}
+    GetOpenFileNameA(&ofn);
 
-	getchar();
-	CloseHandle(injection.hProcess);
+    std::wcout << "[*] chosen DLL: " << cDllPath << std::endl << std::endl;
+
+    // preparing done
+    injection.GetPrivilege();
+
+    injection.dwPid = dwPid;
+    injection.lpcvDllPath = cDllPath;
+    if (injection.native() == EXIT_SUCCESS) {
+        std::cout << "[*] DLL injected successfuly!" << std::endl;
+    }
+
+    getchar();
+    CloseHandle(injection.hProcess);
 }

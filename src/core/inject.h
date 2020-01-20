@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of the dllRifle distribution (https://github.com/dev4ndr3w).
  * Copyright (c) 2020 Andrew Peterson.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -31,9 +31,11 @@ class Injection
 public:
     HANDLE hProcess;
     DWORD dwPid;
-	LPCVOID lpcvDllPath;
+    LPCVOID lpcvDllPath;
+
+    BOOL __stdcall GetPrivilege();
+    BOOL __stdcall GetProcessList();
     BOOL __stdcall native();
-	BOOL __stdcall GetPrivilege();
 };
 
 #endif
