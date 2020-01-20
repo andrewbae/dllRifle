@@ -20,6 +20,8 @@
 
 #include "include.h"
 #include <tlhelp32.h>
+#include <tchar.h>
+#include <psapi.h>
 
 #define PROC_SEARCH (0)
 #define PROC_SEARCH_NAME (1)
@@ -28,8 +30,9 @@
 class Process
 {
 public:
-    WCHAR wcExeFile[MAX_PATH] = { 0 };
-    BOOL __stdcall GetProcessList();
+
+    BOOL __stdcall GetProcessList(WCHAR *wcExeFile);
+    BOOL __stdcall GetProcessModules(HANDLE hProcess, char *cpModuleName);
 };
 
 #endif

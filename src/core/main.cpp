@@ -22,13 +22,18 @@ int main()
     Injection injection;
     Process process;
     OPENFILENAMEA ofn;
-    HANDLE Token, hProcess;
+    HANDLE Token;
     DWORD dwPid = (DWORD)0;
+    WCHAR wcExeFile[MAX_PATH], wcConsoleTitle[16] = TEXT("dllRifle");
+    
     unsigned short uInput;
-    char cDllPath[OFN_FILE_PATH_MAXIMUM];
-
+    char cDllPath[MAX_PATH];
+ 
     memset(&ofn, 0x00, sizeof(ofn));
-    memset(cDllPath, 0x00, sizeof(cDllPath));
+    memset(&cDllPath, 0x00, sizeof(cDllPath));
+    memset(&wcExeFile, 0x00, MAX_PATH*2);
+
+    SetConsoleTitle(wcConsoleTitle);
 
     while (dwPid == 0) {
         std::wcout.clear();
@@ -42,12 +47,12 @@ int main()
 
         switch (uInput) {
         case PROC_SEARCH: {
-            process.GetProcessList();
+            process.GetProcessList(0);
             break;
         }
         case PROC_SEARCH_NAME: {
-            std::wcout << "processName> ", std::wcin >> process.wcExeFile;
-            process.GetProcessList();
+            std::wcout << "processName> ", std::wcin >> wcExeFile;
+            process.GetProcessList(wcExeFile);
             break;
         }
         case PROC_ID: {
@@ -63,7 +68,7 @@ int main()
 
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = nullptr;
-    ofn.nMaxFile = sizeof(cDllPath);
+    ofn.nMaxFile = MAX_PATH;
     ofn.lpstrFile = cDllPath;
     ofn.lpstrFilter = "DLL\0*.dll\0";
     ofn.nFilterIndex = 1;
@@ -79,10 +84,20 @@ int main()
 
     injection.dwPid = dwPid;
     injection.lpcvDllPath = cDllPath;
-    if (injection.native() == EXIT_SUCCESS) {
-        std::cout << "[*] DLL injected successfuly!" << std::endl;
+    if (injection.native() == EXIT_SUCCESS) { 
+        if (process.GetProcessModules(injection.hProcess, cDllPath)) {
+            std::wcout << "[*] DLL injected successfuly!" << std::endl;
+            getchar();
+        }
+        else {
+            std::wcout << "[!] DLL not injected! it's looks like Does not written on memory area" << std::endl;
+            getchar();
+        }
     }
-
+    else {
+        std::wcout << "[!] DLL not injected!" << std::endl;
+        getchar();
+    }
     getchar();
     CloseHandle(injection.hProcess);
 }
