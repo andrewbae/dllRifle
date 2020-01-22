@@ -25,5 +25,6 @@
 #include "include.h"
 #include "inject.h"
 #include "process.h"
+#include "dll.h"
 
 #endif

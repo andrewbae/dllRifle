@@ -19,18 +19,19 @@
 
 int main()
 {
+    dllRifle::Dll dll;
     Injection injection;
     Process process;
+
     OPENFILENAMEA ofn;
     HANDLE Token;
     DWORD dwPid = (DWORD)0;
     WCHAR wcExeFile[MAX_PATH], wcConsoleTitle[16] = TEXT("dllRifle");
     
-    unsigned short uInput;
     char cDllPath[MAX_PATH];
+    unsigned short uInput;
  
     memset(&ofn, 0x00, sizeof(ofn));
-    memset(&cDllPath, 0x00, sizeof(cDllPath));
     memset(&wcExeFile, 0x00, MAX_PATH*2);
 
     SetConsoleTitle(wcConsoleTitle);
@@ -65,18 +66,9 @@ int main()
         }
         }
     }
-
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = nullptr;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFile = cDllPath;
-    ofn.lpstrFilter = "DLL\0*.dll\0";
-    ofn.nFilterIndex = 1;
-    ofn.nMaxFileTitle = 0;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-    GetOpenFileNameA(&ofn);
-
+    
+    dll.OpenDllSelectDialog();
+    memcpy(&cDllPath, ofn.lpstrFile, MAX_PATH);
     std::wcout << "[*] chosen DLL: " << cDllPath << std::endl << std::endl;
 
     // preparing done
