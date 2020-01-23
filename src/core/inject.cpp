@@ -69,7 +69,7 @@ BOOL __stdcall DllRifle::Core::Injection::native()
 	}std::cout << "Success!" << std::endl << "[+] LoadLibraryAddr -> " << lpLoadLibraryAddr << std::endl << std::endl;
 
 	std::cout << "[*] VirtualAllocEx... ";
-	lpDllPathVirtualAddr = VirtualAllocEx(hProcess, nullptr, OFN_FILE_PATH_MAXIMUM, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	lpDllPathVirtualAddr = VirtualAllocEx(hProcess, nullptr, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if (lpDllPathVirtualAddr == (void*)0x00) {
 		std::cout << std::endl << "[!] Failed to allocate virtual memory area inside chosen process" << std::endl;
 		std::cout << GetLastError() << std::endl;
@@ -77,7 +77,7 @@ BOOL __stdcall DllRifle::Core::Injection::native()
 	}std::cout << "Success!" << std::endl << "[+] lpDllPathVirtualAddr -> " << lpDllPathVirtualAddr << std::endl << std::endl;
 
 	std::cout << "[*] WriteProcessMemory... ";
-	if (WriteProcessMemory(hProcess, lpDllPathVirtualAddr, lpcvDllPath, OFN_FILE_PATH_MAXIMUM, nullptr) == 0) {
+	if (WriteProcessMemory(hProcess, lpDllPathVirtualAddr, lpcvDllPath, MAX_PATH, nullptr) == 0) {
 		std::cout << "[!] Failed write lpDllPath to lpDllPathVirtualAddr" << std::endl;
 		std::cout << GetLastError() << std::endl;
 		return EXIT_FAILURE;

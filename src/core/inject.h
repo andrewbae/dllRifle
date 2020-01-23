@@ -25,7 +25,6 @@
 #include "windows.h"
 #include <iostream>
 
-#define OFN_FILE_PATH_MAXIMUM (256)
 
 namespace DllRifle {
     namespace Core {

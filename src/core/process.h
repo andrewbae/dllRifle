@@ -28,15 +28,10 @@
 #include <tchar.h>
 #include <psapi.h>
 
-#define PROC_SEARCH (0)
-#define PROC_SEARCH_NAME (1)
-#define PROC_ID (2)
-
 namespace DllRifle {
     namespace Core {
         class Process {
         public:
-
             BOOL __stdcall GetProcessList(WCHAR *wcExeFile);
             BOOL __stdcall GetProcessModules(HANDLE hProcess, char *cpModuleName);
         };

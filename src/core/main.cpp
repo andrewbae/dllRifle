@@ -68,7 +68,7 @@ int main()
         }
     }
     
-    dll.OpenDllSelectDialog();
+    ofn = dll.OpenDllSelectDialog();
     memcpy(&cDllPath, ofn.lpstrFile, MAX_PATH);
     std::wcout << "[*] chosen DLL: " << cDllPath << std::endl << std::endl;
 

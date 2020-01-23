@@ -15,18 +15,11 @@
 * along with dllRifle.If not, see < https://www.gnu.org/licenses/>.
 */
 
-#ifndef _MAIN_H
-#define _MAIN_H
+#ifndef _DEFINITION_H
+#define _DEFINITION_H
 
-#ifndef _MSC_VER
-#pragma comment(lib, "uuid.lib")
-#endif
-
-#include "windows.h"
-#include <iostream>
-#include "inject.h"
-#include "process.h"
-#include "dll.h"
-#include "define.h"
+#define PROC_SEARCH         (WM_USER + 0x0000)
+#define PROC_SEARCH_NAME    (WM_USER + 0x0001)
+#define PROC_ID             (WM_USER + 0x0002)
 
 #endif
