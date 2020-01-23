@@ -22,15 +22,15 @@
 #pragma comment(lib, "uuid.lib")
 #endif
 
-#include "include.h"
+#include "windows.h"
+#include <iostream>
 
-namespace dllRifle
-{
-    class Dll
-    {
+namespace DllRifle {
+    namespace Core {
+        extern class Dll {
         public:
-        OPENFILENAMEA __stdcall OpenDllSelectDialog();
-    };
+            OPENFILENAMEA __stdcall OpenDllSelectDialog();
+        };
+    }
 }
-
 #endif

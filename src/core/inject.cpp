@@ -17,7 +17,9 @@
 
 #include "inject.h"
 
-BOOL __stdcall Injection::GetPrivilege()
+using namespace DllRifle;
+
+BOOL __stdcall DllRifle::Core::Injection::GetPrivilege()
 {
 	HANDLE hToken;
 	TOKEN_PRIVILEGES tp;
@@ -35,7 +37,7 @@ BOOL __stdcall Injection::GetPrivilege()
 	return EXIT_FAILURE;
 }
 
-BOOL __stdcall Injection::native()
+BOOL __stdcall DllRifle::Core::Injection::native()
 {
 	HANDLE hThreadId;
 	LPVOID lpLoadLibraryAddr;

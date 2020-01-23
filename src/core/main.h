@@ -22,7 +22,8 @@
 #pragma comment(lib, "uuid.lib")
 #endif
 
-#include "include.h"
+#include "windows.h"
+#include <iostream>
 #include "inject.h"
 #include "process.h"
 #include "dll.h"

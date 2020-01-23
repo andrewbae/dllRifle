@@ -16,8 +16,11 @@
 */
 
 #include "process.h"
+#include <WtsApi32.h>
 
-BOOL __stdcall Process::GetProcessList(WCHAR *wcpExeFile)
+using namespace DllRifle;
+
+BOOL __stdcall DllRifle::Core::Process::GetProcessList(WCHAR *wcpExeFile)
 {
     HANDLE hProcessSnap;
     PROCESSENTRY32W pe32;
@@ -57,7 +60,7 @@ BOOL __stdcall Process::GetProcessList(WCHAR *wcpExeFile)
     return EXIT_SUCCESS;
 }
 
-BOOL __stdcall Process::GetProcessModules(HANDLE hProcess, char *cpDllPath)
+BOOL __stdcall DllRifle::Core::Process::GetProcessModules(HANDLE hProcess, char *cpDllPath)
 {
     HMODULE hProcessModules[1024];
     DWORD dwNeeded;

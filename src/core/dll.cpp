@@ -17,7 +17,9 @@
 
 #include "dll.h"
 
-OPENFILENAMEA __stdcall dllRifle::Dll::OpenDllSelectDialog()
+using namespace DllRifle;
+
+OPENFILENAMEA __stdcall DllRifle::Core::Dll::OpenDllSelectDialog()
 {
     OPENFILENAMEA ofn;
     char cDllPath[MAX_PATH];

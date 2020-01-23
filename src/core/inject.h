@@ -22,20 +22,23 @@
 #pragma comment(lib, "uuid.lib")
 #endif
 
-#include "include.h"
+#include "windows.h"
+#include <iostream>
 
 #define OFN_FILE_PATH_MAXIMUM (256)
 
-class Injection
-{
-public:
-    HANDLE hProcess;
-    DWORD dwPid;
-    LPCVOID lpcvDllPath;
+namespace DllRifle {
+    namespace Core {
+        class Injection {
+        public:
+            HANDLE hProcess;
+            DWORD dwPid;
+            LPCVOID lpcvDllPath;
 
-    BOOL __stdcall GetPrivilege();
-    BOOL __stdcall GetProcessList();
-    BOOL __stdcall native();
-};
-
+            BOOL __stdcall GetPrivilege();
+            BOOL __stdcall GetProcessList();
+            BOOL __stdcall native();
+        };
+    }
+}
 #endif

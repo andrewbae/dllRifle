@@ -19,9 +19,10 @@
 
 int main()
 {
-    dllRifle::Dll dll;
-    Injection injection;
-    Process process;
+    using namespace DllRifle;
+    Core::Dll dll;
+    Core::Injection injection;
+    Core::Process process;
 
     OPENFILENAMEA ofn;
     HANDLE Token;
@@ -89,4 +90,5 @@ int main()
     }
     system("pause");
     CloseHandle(injection.hProcess);
+    return EXIT_SUCCESS;
 }

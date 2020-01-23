@@ -18,7 +18,12 @@
 #ifndef _INTERACTIVE_H
 #define _INTERACTIVE_H
 
-#include "include.h"
+#ifndef _MSC_VER
+#pragma comment(lib, "uuid.lib")
+#endif
+
+#include "windows.h"
+#include <iostream>
 #include <tlhelp32.h>
 #include <tchar.h>
 #include <psapi.h>
@@ -27,12 +32,14 @@
 #define PROC_SEARCH_NAME (1)
 #define PROC_ID (2)
 
-class Process
-{
-public:
+namespace DllRifle {
+    namespace Core {
+        class Process {
+        public:
 
-    BOOL __stdcall GetProcessList(WCHAR *wcExeFile);
-    BOOL __stdcall GetProcessModules(HANDLE hProcess, char *cpModuleName);
-};
-
+            BOOL __stdcall GetProcessList(WCHAR *wcExeFile);
+            BOOL __stdcall GetProcessModules(HANDLE hProcess, char *cpModuleName);
+        };
+    }
+}
 #endif
