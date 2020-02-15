@@ -15,23 +15,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INJECT_H
-#define _INJECT_H
+#ifndef _PROC_H
+#define _PROC_H
 
+#include <windows.h>
+#include "../core/dll.h"
+#include "../core/inject.h"
+#include "../define.h"
+#include "./log.h"
+#include "./app.h"
+#include "../core/process.h"
 
-#include "windows.h"
+namespace Ui { class Procedure {}; } 
 
-namespace Core { class Injection {}; }
+LRESULT __stdcall WindowProcedure(
+    _In_ HWND hWnd,
+    _In_ UINT uMsg,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam
+);
+LRESULT __stdcall DrProcessSelectorDialogProcedure(
+    _In_ HWND processSelectorDialogHandle,
+    _In_ UINT uMsg,
+    _In_ WPARAM wParam,
+    _In_ LPARAM lParam
+);
 
-class Injection {
-public:
-    HANDLE processHandle;
-    DWORD pid;
-    LPCVOID dllPath;
-    HWND logBoxHandle;
-
-    BOOL __stdcall DrGetPrivilege();
-    BOOL __stdcall DrGetProcessList();
-    BOOL __stdcall DrNativeInjection();
-};
 #endif

@@ -15,23 +15,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INJECT_H
-#define _INJECT_H
 
+#ifndef _APP_H
+#define _APP_H
 
-#include "windows.h"
+#include "proc.h"
+#include <windows.h>
 
-namespace Core { class Injection {}; }
+namespace Ui { class Application {}; };
 
-class Injection {
+class Application {
+private:
+    WNDCLASSA windowClass;
+    RECT rect;
 public:
-    HANDLE processHandle;
-    DWORD pid;
-    LPCVOID dllPath;
-    HWND logBoxHandle;
+    const LPCSTR classNameMain = "DLLRIFLE_MAIN";
+    const LPCSTR classNameSelectProcess = "DLLRIFLE_PROCESS_SELECTOR";
+    const LPCSTR classNameBackgroundWhite = "BACKGROUND_WHITE";
 
-    BOOL __stdcall DrGetPrivilege();
-    BOOL __stdcall DrGetProcessList();
-    BOOL __stdcall DrNativeInjection();
+    DWORD victimProcessId;
+    HWND mainHandle;
+    HINSTANCE instanceHandle;
+    HWND __stdcall DrInitializeAppSystem(
+        _In_ HINSTANCE imageBaseAddress,
+        _In_ LPCSTR applicationTitle,
+        _In_ int cmdShow
+    );
+    void __stdcall DrSetWindowPositionToCenter(
+        _In_ HWND windowHandle
+    );
 };
+
 #endif

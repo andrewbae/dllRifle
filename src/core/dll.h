@@ -18,19 +18,14 @@
 #ifndef _DLL_H
 #define _DLL_H
 
-#ifndef _MSC_VER
-#pragma comment(lib, "uuid.lib")
-#endif
 
 #include "windows.h"
-#include <iostream>
 
-namespace DllRifle {
-    namespace Core {
-        extern class Dll {
-        public:
-            OPENFILENAMEA __stdcall OpenDllSelectDialog();
-        };
-    }
-}
+namespace Core { class Dll {}; }
+
+class Dll {
+public:
+    OPENFILENAMEA* __stdcall DrOpenDllSelector();
+};
+
 #endif

@@ -15,26 +15,27 @@
 * along with dllRifle.If not, see < https://www.gnu.org/licenses/>.
 */
 
-#ifndef _INTERACTIVE_H
-#define _INTERACTIVE_H
-
-#ifndef _MSC_VER
-#pragma comment(lib, "uuid.lib")
-#endif
+#ifndef _PROCESS_H
+#define _PROCESS_H
 
 #include "windows.h"
-#include <iostream>
 #include <tlhelp32.h>
 #include <tchar.h>
 #include <psapi.h>
 
-namespace DllRifle {
-    namespace Core {
-        class Process {
-        public:
-            BOOL __stdcall GetProcessList(WCHAR *wcExeFile);
-            BOOL __stdcall GetProcessModules(HANDLE hProcess, char *cpModuleName);
-        };
-    }
-}
+namespace Core { class Process {}; }
+
+class Process {
+public:
+    void __stdcall DrGetProcessList(
+        _In_ HWND processListBoxHandle
+        );
+
+    BOOL __stdcall DrGetProcessModules(
+        _In_ HANDLE processHandle,
+        _In_ HWND logBoxHandle,
+        _In_ char* dllPath
+        );
+};
+
 #endif

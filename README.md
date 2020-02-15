@@ -1,6 +1,8 @@
 # dllRifle
 An open-source DLL injector for windows
 
+<img src="https://github.com/dev4ndr3w/dllRifle/blob/master/ref/dllrifle_preview.PNG" style="width:300px"/>
+
 ## Supported OS
 
 | Platform                 | Supported          |
@@ -16,6 +18,10 @@ An open-source DLL injector for windows
 ## Download
 
 When the beta version is released, I will add a binary download link as soon as possible.
+
+## Demonstration
+
+<img src="https://github.com/dev4ndr3w/dllRifle/blob/master/ref/dllrifle_demonstration.PNG" style="width:300px"/>
 
 ## License
 

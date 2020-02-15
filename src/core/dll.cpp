@@ -17,9 +17,7 @@
 
 #include "dll.h"
 
-using namespace DllRifle;
-
-OPENFILENAMEA __stdcall DllRifle::Core::Dll::OpenDllSelectDialog()
+OPENFILENAMEA *__stdcall Dll::DrOpenDllSelector()
 {
     OPENFILENAMEA ofn;
     char cDllPath[MAX_PATH];
@@ -37,9 +35,6 @@ OPENFILENAMEA __stdcall DllRifle::Core::Dll::OpenDllSelectDialog()
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
     if (GetOpenFileNameA(&ofn) == 1) {
-        return ofn;
-    }
-    else {
-        MessageBox(nullptr, L"Failed to GetOpenFileNameA", L"shit!", MB_OK);
+        return &ofn;
     }
 }

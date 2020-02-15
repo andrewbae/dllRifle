@@ -15,23 +15,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INJECT_H
-#define _INJECT_H
+#include "main.h"
 
+INT __stdcall WinMain(
+    _In_ HINSTANCE imageBaseAddress,
+    _In_opt_ HINSTANCE prevImageBaseAddress,
+    _In_ LPSTR cmdLine,
+    _In_ INT cmdShow
+)
+{
+    Application *ap = new Application;
+    ap->instanceHandle = imageBaseAddress;
 
-#include "windows.h"
+    mainHandle = ap->DrInitializeAppSystem(ap->instanceHandle, "DllRifle by dev4ndr3w", cmdShow);
+    if (!(mainHandle)) { MessageBoxA(nullptr, "Cannot create the window", "Unexpected error!", MB_OK | MB_ICONSTOP); return EXIT_FAILURE; }
+    MSG message;
 
-namespace Core { class Injection {}; }
+    while (GetMessage(&message, 0, 0, 0) > 0) {
+        TranslateMessage(&message);
+        DispatchMessage(&message);
+    }
+    return 0;
+}
 
-class Injection {
-public:
-    HANDLE processHandle;
-    DWORD pid;
-    LPCVOID dllPath;
-    HWND logBoxHandle;
-
-    BOOL __stdcall DrGetPrivilege();
-    BOOL __stdcall DrGetProcessList();
-    BOOL __stdcall DrNativeInjection();
-};
-#endif

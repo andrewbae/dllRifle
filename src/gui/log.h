@@ -15,23 +15,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INJECT_H
-#define _INJECT_H
+#ifndef _LOG_H
+#define _LOG_H
 
+#include <windows.h>
 
-#include "windows.h"
+namespace Ui { class Log {}; }
 
-namespace Core { class Injection {}; }
-
-class Injection {
+class Log {
 public:
-    HANDLE processHandle;
-    DWORD pid;
-    LPCVOID dllPath;
-    HWND logBoxHandle;
-
-    BOOL __stdcall DrGetPrivilege();
-    BOOL __stdcall DrGetProcessList();
-    BOOL __stdcall DrNativeInjection();
+    void __stdcall DrLogOutputA(
+        _In_ HWND logBoxHandle,
+        _In_ LPCSTR string
+    );
+    void __stdcall DrLogOutputW(
+        _In_ HWND logBoxHandle,
+        _In_ LPCWSTR string
+    );
+    void __stdcall DrLogOutputAddressA(
+        _In_ HWND logBoxHandle,
+        _In_ LPCVOID address
+    );
 };
+
 #endif

@@ -16,84 +16,92 @@
 */
 
 #include "process.h"
+#include "../gui/log.h"
+#include <string>
+#include <sstream>
 #include <WtsApi32.h>
 
-using namespace DllRifle;
-
-BOOL __stdcall DllRifle::Core::Process::GetProcessList(WCHAR *wcpExeFile)
+void __stdcall Process::DrGetProcessList(HWND processListBoxHandle)
 {
-    HANDLE hProcessSnap;
+    HANDLE processHandleSnap;
     PROCESSENTRY32W pe32;
+
     memset(&pe32, 0x00, sizeof(pe32));
-    pe32.dwSize = sizeof(pe32);
-    WCHAR wcExeFile[MAX_PATH];
+
+    pe32.dwSize = sizeof(PROCESSENTRY32W);
+
+    processHandleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    Process32FirstW(processHandleSnap, &pe32);
     
-    std::wcout << "----- BEGIN PROCESS LIST -----" << std::endl;
-    std::wcout.clear();
-    std::cin.clear();
+    char pid[8];
+    int processNameLength;
+    for (UINT v0 = 0; Process32NextW(processHandleSnap, &pe32) != 0x00; v0++) {
+        memset(&processNameLength, 0x00, sizeof(int));
+        // type conversion HEX -> DEC
+        _ultoa_s(pe32.th32ProcessID, pid, 8, 10);
+        memcpy((void*)(pe32.szExeFile + lstrlenW(pe32.szExeFile)), "(", 1);
 
-
-    if (wcpExeFile == 0x00) {
-        hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-        Process32FirstW(hProcessSnap, &pe32);
-        while (Process32NextW(hProcessSnap, &pe32) != 0x00)
-        {
-            std::wcout << pe32.szExeFile;
-            std::wcout << "(" << pe32.th32ProcessID << ")" << std::endl;
+        processNameLength = lstrlenW(pe32.szExeFile);
+        for (int v1 = 0; v1 < strlen(pid); v1++) {
+            memcpy((void*)(pe32.szExeFile + processNameLength + v1), (pid + v1), 1);
         }
+
+        memcpy((void*)(pe32.szExeFile + lstrlenW(pe32.szExeFile)), ")", 1);
+
+        // Send Strings to list box
+        int index = SendMessageW(processListBoxHandle, LB_ADDSTRING, 0, (LPARAM)pe32.szExeFile);
+        SendMessageA(processListBoxHandle, LB_SETITEMDATA, index, pe32.th32ProcessID);
     }
+    SetFocus(processListBoxHandle);
+    //}
+    /*
     else {
         memcpy(wcExeFile, wcpExeFile, (MAX_PATH * 2) - 10);
         memset((wcExeFile + wcslen(wcExeFile)), 0x00, ((MAX_PATH * 2) - wcslen(wcExeFile) - 10));
 
-        hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-        Process32FirstW(hProcessSnap, &pe32);
-        while (Process32NextW(hProcessSnap, &pe32) != 0x00)
+        processHandleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        Process32FirstW(processHandleSnap, &pe32rotation);
+        while (Process32NextW(processHandleSnap, &pe32rotation) != 0x00)
         {
-            if (CompareStringW(LOCALE_ALL, NORM_IGNORECASE, pe32.szExeFile, wcslen(pe32.szExeFile), wcExeFile, wcslen(wcExeFile)) == CSTR_EQUAL) {
-                std::wcout << pe32.szExeFile;
-                std::wcout << "(" << pe32.th32ProcessID << ")" << std::endl;
+            if (CompareStringW(LOCALE_ALL, NORM_IGNORECASE, pe32rotation.szExeFile, wcslen(pe32rotation.szExeFile), wcExeFile, wcslen(wcExeFile)) == CSTR_EQUAL) {
+                std::wcout << pe32rotation.szExeFile;
+                std::wcout << "(" << pe32rotation.th32ProcessID << ")" << std::endl;
             }
         }
     }
-    std::wcout << "----- END PROCESS LIST -----" << std::endl << std::endl;
-    return EXIT_SUCCESS;
+    */
+    CloseHandle(processHandleSnap);
 }
 
-BOOL __stdcall DllRifle::Core::Process::GetProcessModules(HANDLE hProcess, char *cpDllPath)
+BOOL __stdcall Process::DrGetProcessModules(HANDLE processHandle, HWND logBoxHandle, char* dllPath)
 {
-    HMODULE hProcessModules[1024];
-    DWORD dwNeeded;
-    char cModuleName[MAX_PATH], cDllPath[MAX_PATH];
- 
-    memcpy(cDllPath, cpDllPath, MAX_PATH);
-    memset((cDllPath + strlen(cDllPath)), 0x00, MAX_PATH - strlen(cDllPath));
+    Log log;
+    HMODULE processHandleModules[1024];
+    DWORD needed = 0;
+    char cModuleName[MAX_PATH], dp[MAX_PATH];
 
-    std::wcout << "----- BEGIN PROCESS MODULES LIST -----" << std::endl;
-    if (*cModuleName == 0x00) {
-        EnumProcessModules(hProcess, hProcessModules, sizeof(hProcessModules), &dwNeeded);
-        for (unsigned int v0 = 0; v0 < (dwNeeded / sizeof(HMODULE)); v0++) {
-            if (GetModuleFileNameExA(hProcess, hProcessModules[v0], cModuleName, sizeof(cModuleName) / sizeof(char))) {
-               std::cout << "0x" << hProcessModules[v0] << " -> " << cModuleName << std::endl;
-            }
-            memset(cModuleName, 0x00, sizeof(cModuleName));
-        }
-    }
-    else {
-        EnumProcessModules(hProcess, hProcessModules, sizeof(hProcessModules), &dwNeeded);
-        for (unsigned int v0 = 0; v0 < (dwNeeded / sizeof(HMODULE)); v0++) {
-            if (GetModuleFileNameExA(hProcess, hProcessModules[v0], cModuleName, sizeof(cModuleName) / sizeof(TCHAR))
-            && CompareStringA(LOCALE_ALL, NORM_IGNORECASE, cModuleName, strlen(cModuleName), cDllPath, strlen(cDllPath)) == CSTR_EQUAL) {
-                std::wcout << "0x" << hProcessModules[v0] << " -> " << cModuleName << std::endl;
-                std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;
+    memcpy(dp, dllPath, MAX_PATH);
+    memset((dp+ strlen(dp)), 0x00, MAX_PATH - strlen(dp));
+    memset(&needed, 0x00, sizeof(DWORD));
+    memset(&processHandleModules, 0x00, sizeof(HMODULE)*1024);
+        
+        EnumProcessModules(processHandle, processHandleModules, sizeof(processHandleModules), &needed);
+        for (unsigned int v0 = 0; v0 < (needed / sizeof(HMODULE)); v0++) {
+            if (GetModuleFileNameExA(processHandle, processHandleModules[v0], cModuleName, sizeof(cModuleName) / sizeof(TCHAR))
+                && CompareStringA(LOCALE_ALL, NORM_IGNORECASE, cModuleName, strlen(cModuleName),dp, strlen(dp)) == CSTR_EQUAL) {
+                /*
+                
+                std::wcout << "0x" << processHandleModules[v0] << " -> " << cModuleName << std::endl;
+                log.OutputAddressA(logBoxHandle, *(processHandleModules + v0));
+                log.OutputA(logBoxHandle, dllPath);
+                log.OutputA(logBoxHandle, "\r\n");
+                */
                 return EXIT_SUCCESS;
             }
             memset(cModuleName, 0x00, sizeof(cModuleName));
         }
-        std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;
-        return EXIT_FAILURE;
-    }
-    std::wcout << "----- END PROCESS MODULES LIST -----" << std::endl;
+        //return EXIT_FAILURE;
+    //}
     return EXIT_SUCCESS;
 }
 

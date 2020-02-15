@@ -15,23 +15,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _INJECT_H
-#define _INJECT_H
+#ifndef _MAIN_H
+#define _MAIN_H
 
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#include <windowsx.h>
+#include <commctrl.h>
 
-#include "windows.h"
+#include "../core/process.h"
+#include "../core/dll.h"
+#include "../core/inject.h"
+#include "../define.h"
+#include "./log.h"
+#include "./proc.h"
+#include "./app.h"
 
-namespace Core { class Injection {}; }
+#define CONTAINER (30)
 
-class Injection {
-public:
-    HANDLE processHandle;
-    DWORD pid;
-    LPCVOID dllPath;
-    HWND logBoxHandle;
+HWND mainHandle;
 
-    BOOL __stdcall DrGetPrivilege();
-    BOOL __stdcall DrGetProcessList();
-    BOOL __stdcall DrNativeInjection();
-};
+INT __stdcall WinMain(
+    _In_ HINSTANCE imageBaseAddress,
+    _In_opt_ HINSTANCE prevImageBaseAddress,
+    _In_ LPSTR cmdLine,
+    _In_ INT cmdShow
+    );
+
 #endif

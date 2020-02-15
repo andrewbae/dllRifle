@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -102,9 +102,12 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <InputResourceManifests>dllRifle.manifest</InputResourceManifests>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -142,16 +145,25 @@
     <ClCompile Include="src\core\dll.cpp" />
     <ClCompile Include="src\core\inject.cpp" />
     <ClCompile Include="src\core\process.cpp" />
-    <ClCompile Include="src\core\main.cpp" />
+    <ClCompile Include="src\gui\app.cpp" />
+    <ClCompile Include="src\gui\log.cpp" />
+    <ClCompile Include="src\gui\main.cpp" />
+    <ClCompile Include="src\gui\proc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\inject.h" />
-    <None Include="src\core\main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\definition.h" />
+    <ClInclude Include="src\define.h" />
     <ClInclude Include="src\core\dll.h" />
     <ClInclude Include="src\core\process.h" />
+    <ClInclude Include="src\gui\app.h" />
+    <ClInclude Include="src\gui\log.h" />
+    <ClInclude Include="src\gui\main.h" />
+    <ClInclude Include="src\gui\proc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="..\..\processhacker\ProcessHacker\dllRifle.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

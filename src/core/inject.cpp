@@ -16,10 +16,9 @@
 */
 
 #include "inject.h"
+#include "../gui/log.h"
 
-using namespace DllRifle;
-
-BOOL __stdcall DllRifle::Core::Injection::GetPrivilege()
+BOOL __stdcall Injection::DrGetPrivilege()
 {
 	HANDLE hToken;
 	TOKEN_PRIVILEGES tp;
@@ -37,14 +36,18 @@ BOOL __stdcall DllRifle::Core::Injection::GetPrivilege()
 	return EXIT_FAILURE;
 }
 
-BOOL __stdcall DllRifle::Core::Injection::native()
+BOOL __stdcall Injection::DrNativeInjection()
 {
-	HANDLE hThreadId;
-	LPVOID lpLoadLibraryAddr;
-	LPVOID lpDllPathVirtualAddr;
+	Log *log = new Log;
+	HANDLE threadHandle;
+	LPVOID loadLibraryAddress;
+	LPVOID dllPathVirtualAddress;
+	
+	log->DrLogOutputW(logBoxHandle, TEXT("===== BEGIN INJECTION SEQUENCE =====\r\n"));	
+	log->DrLogOutputW(logBoxHandle, TEXT("[INFO] injetion method: native(default)\r\n"));
 
-	std::cout << "[*] OpenProcess... ";
-	hProcess = OpenProcess(
+	log->DrLogOutputW(logBoxHandle, TEXT("[INFO] Open process handle..."));
+	processHandle = OpenProcess(
 		PROCESS_ALL_ACCESS |
 		PROCESS_CREATE_THREAD |
 		PROCESS_CREATE_PROCESS |
@@ -52,46 +55,51 @@ BOOL __stdcall DllRifle::Core::Injection::native()
 		PROCESS_VM_READ |
 		PROCESS_QUERY_INFORMATION |
 		PROCESS_VM_OPERATION
-		, (BOOL)0, dwPid);
+		, (BOOL)0, pid);
 
-	if (hProcess == (void*)0x00) {
-		std::cout << std::endl << "[!] Failed to open the chosen process" << std::endl;
-		std::cout << GetLastError() << std::endl;
+	if (processHandle == (void*)0x00) {
+		log->DrLogOutputW(logBoxHandle, TEXT("Failed!\r\n[ERROR] Failed to open the chosen process\r\n"));
 		return EXIT_FAILURE;
-	}std::cout << "Success!" << std::endl << "[+] hProcess -> " << hProcess << std::endl << std::endl;
-
-	std::cout << "[*] GetProcAddress... ";
-	lpLoadLibraryAddr = GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "LoadLibraryA");
-	if (lpLoadLibraryAddr == (void*)0x00) {
-		std::cout << "[!] Failed to get LoadLibraryA function address on kernel32.dll" << std::endl;
-		std::cout << GetLastError() << std::endl;
+	}log->DrLogOutputW(logBoxHandle, TEXT("Success!\r\n[INFO] processHandle -> "));
+	log->DrLogOutputAddressA(logBoxHandle, processHandle);
+	Sleep(1000);
+	log->DrLogOutputW(logBoxHandle, TEXT("\r\n\r\n[INFO] Get LoadLibraryA address from kernel32.dll..."));
+	loadLibraryAddress = GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "LoadLibraryA");
+	if (loadLibraryAddress == (void*)0x00) {
+		log->DrLogOutputW(logBoxHandle, TEXT("Failed!\r\n Failed to get LoadLibraryA function address on kernel32.dll\r\n"));
 		return EXIT_FAILURE;
-	}std::cout << "Success!" << std::endl << "[+] LoadLibraryAddr -> " << lpLoadLibraryAddr << std::endl << std::endl;
+	}log->DrLogOutputW(logBoxHandle, TEXT("Success!\r\n[INFO] loadLibraryAddress -> ")); 
+	log->DrLogOutputAddressA(logBoxHandle, loadLibraryAddress);
 
-	std::cout << "[*] VirtualAllocEx... ";
-	lpDllPathVirtualAddr = VirtualAllocEx(hProcess, nullptr, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-	if (lpDllPathVirtualAddr == (void*)0x00) {
-		std::cout << std::endl << "[!] Failed to allocate virtual memory area inside chosen process" << std::endl;
-		std::cout << GetLastError() << std::endl;
+	Sleep(1000);
+	log->DrLogOutputW(logBoxHandle, TEXT("\r\n\r\n[INFO] VirtualAllocEx..."));
+	dllPathVirtualAddress = VirtualAllocEx(processHandle, nullptr, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	if (dllPathVirtualAddress == (void*)0x00) {
+		log->DrLogOutputW(logBoxHandle, TEXT("Failed!\r\n Failed to allocate virtual memory area inside chosen process\r\n"));
 		return EXIT_FAILURE;
-	}std::cout << "Success!" << std::endl << "[+] lpDllPathVirtualAddr -> " << lpDllPathVirtualAddr << std::endl << std::endl;
+	}log->DrLogOutputW(logBoxHandle, TEXT("Success!\r\n[INFO] dllPathVirtualAddress -> "));
+	log->DrLogOutputAddressA(logBoxHandle, dllPathVirtualAddress);
 
-	std::cout << "[*] WriteProcessMemory... ";
-	if (WriteProcessMemory(hProcess, lpDllPathVirtualAddr, lpcvDllPath, MAX_PATH, nullptr) == 0) {
-		std::cout << "[!] Failed write lpDllPath to lpDllPathVirtualAddr" << std::endl;
-		std::cout << GetLastError() << std::endl;
+	Sleep(1000);
+	log->DrLogOutputW(logBoxHandle, TEXT("\r\n\r\n[INFO] WriteProcessMemory..."));
+	if (WriteProcessMemory(processHandle, dllPathVirtualAddress, dllPath, MAX_PATH, nullptr) == 0) {
+		log->DrLogOutputW(logBoxHandle, TEXT("Failed!\r\n Failed write dllPath to dllPathVirtualAddress\n"));
 		return EXIT_FAILURE;
-	}std::cout << "Success!" << std::endl << std::endl;
+	}log->DrLogOutputW(logBoxHandle, TEXT("Success!\r\n"));
 
-	hThreadId = CreateRemoteThread(hProcess, nullptr, 0, (LPTHREAD_START_ROUTINE)lpLoadLibraryAddr, lpDllPathVirtualAddr, 0, 0);
+	Sleep(1000);
 
-	if (hThreadId == (void*)0x00) {
-		std::cout << "[!] Failed create thread on chosen process" << std::endl << GetLastError() << std::endl;
+	log->DrLogOutputW(logBoxHandle, TEXT("\r\n\r\n[INFO] CreateRemoteThread..."));
+	threadHandle = CreateRemoteThread(processHandle, nullptr, 0, (LPTHREAD_START_ROUTINE)loadLibraryAddress, dllPathVirtualAddress, 0, 0);
+	if (threadHandle == (void*)0x00) {
+		log->DrLogOutputW(logBoxHandle, TEXT("Failed!\r\n Failed create thread on chosen process\n"));
 		return EXIT_FAILURE;
-	}std::cout << "[*] Thread ID: " << hThreadId << std::endl;
-	VirtualFree(lpLoadLibraryAddr, 0, MEM_RELEASE);
-	VirtualFree(lpDllPathVirtualAddr, 0, MEM_RELEASE);
-	CloseHandle(hThreadId);
+	}log->DrLogOutputW(logBoxHandle, TEXT("Success!\r\n [INFO] threadHandle -> "));
+	log->DrLogOutputAddressA(logBoxHandle, threadHandle);
+	log->DrLogOutputA(logBoxHandle, "\r\n");
+	VirtualFree(loadLibraryAddress, 0, MEM_RELEASE);
+	VirtualFree(dllPathVirtualAddress, 0, MEM_RELEASE);
+	CloseHandle(threadHandle);
 
 	return EXIT_SUCCESS;
 }
