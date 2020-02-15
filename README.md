@@ -21,7 +21,7 @@ When the beta version is released, I will add a binary download link as soon as 
 
 ## Demonstration
 
-<img src="https://github.com/dev4ndr3w/dllRifle/blob/master/ref/dllrifle_demonstration.PNG" style="width:300px"/>
+<img src="https://github.com/dev4ndr3w/dllRifle/blob/master/ref/dllrifle_demonstration.gif" style="width:300px"/>
 
 ## License
 
