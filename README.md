@@ -17,7 +17,7 @@ An open-source DLL injector for windows
 
 ## Download
 
-When the beta version is released, I will add a binary download link as soon as possible.
+https://github.com/dev4ndr3w/dllRifle/releases
 
 ## Demonstration
 
